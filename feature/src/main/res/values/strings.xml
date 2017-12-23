@@ -1,0 +1,9 @@
+<resources>
+    <string name="title_activity_main">HEB Challenge</string>
+    <string name="search">Search</string>
+    <string name="clear_search">Clear Search</string>
+    <string name="start_polling">Start fetching</string>
+    <string name="stop_polling">Stop fetching</string>
+    <string name="new_pictures_title">New PhotoGallery pictures</string>
+    <string name="new_pictures_text">You have new pictures in PhotoGallery.</string>
+</resources>
