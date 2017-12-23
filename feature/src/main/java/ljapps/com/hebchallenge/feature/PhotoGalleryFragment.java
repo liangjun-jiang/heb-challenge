@@ -174,9 +174,7 @@ public class PhotoGalleryFragment extends Fragment {
                 if (newState == SCROLL_STATE_DRAGGING) {
                     mSearchView.setVisibility(View.GONE);
                     mSearchItem.setVisible(false);
-                    Log.i(TAG, "starting dragging");
                 } else if (newState == SCROLL_STATE_IDLE){
-                    Log.i(TAG, "settled");
                     mSearchView.setVisibility(View.VISIBLE);
                     mSearchItem.setVisible(true);
                 }
