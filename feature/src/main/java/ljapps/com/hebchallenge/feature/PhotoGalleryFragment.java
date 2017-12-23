@@ -28,6 +28,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
+import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
+
 /**
  * Created by liangjunjiang on 12/23/17.
  */
@@ -39,11 +42,15 @@ public class PhotoGalleryFragment extends Fragment {
     private GridLayoutManager mLayoutManager;
     private PhotoAdapter mPhotoAdapter;
 
+    MenuItem mSearchItem;
+    SearchView mSearchView;
+
     private static final String TAG = "PhotoGalleryFragment";
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,16 +82,16 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_photo_gallery, menu);
 
-        final MenuItem searchItem = menu.findItem(R.id.menu_item_searh);
-        final SearchView searchView = (SearchView) searchItem.getActionView();
+        mSearchItem = menu.findItem(R.id.menu_item_searh);
+        mSearchView = (SearchView) mSearchItem.getActionView();
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "QueryTextSubmit: " + query);
                 QueryPreferences.setStoredQuery(getActivity(), query);
 
-                searchView.clearFocus();
+                mSearchView.clearFocus();
 
                 updateItems();
                 return true;
@@ -97,11 +104,11 @@ public class PhotoGalleryFragment extends Fragment {
             }
         });
 
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String query = QueryPreferences.getStoredQuery(getActivity());
-                searchView.setQuery(query, false);
+                mSearchView.setQuery(query, false);
             }
         });
 
@@ -159,11 +166,30 @@ public class PhotoGalleryFragment extends Fragment {
         mPhotoRecyclerView = v.findViewById(R.id.photo_recycler_view);
         mLayoutManager = new GridLayoutManager(getActivity(), 2);
         mPhotoRecyclerView.setLayoutManager(mLayoutManager);
+        mPhotoRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == SCROLL_STATE_DRAGGING) {
+                    mSearchView.setVisibility(View.GONE);
+                    mSearchItem.setVisible(false);
+                    Log.i(TAG, "starting dragging");
+                } else if (newState == SCROLL_STATE_IDLE){
+                    Log.i(TAG, "settled");
+                    mSearchView.setVisibility(View.VISIBLE);
+                    mSearchItem.setVisible(true);
+                }
+            }
+        });
+
 
         setupAdapter();
 
         return v;
     }
+
+
 
     private void setupAdapter() {
         if (isAdded()) {
