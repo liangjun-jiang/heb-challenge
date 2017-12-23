@@ -46,6 +46,7 @@ public class FullsizePhotoFragment extends Fragment {
         setHasOptionsMenu(true);
 
         Intent intent = getActivity().getIntent();
+        // a hack. we don't want to request an api to get a larger size url again
         String url = intent.getStringExtra("url").replace("_m", "_b");
 
         Log.i(TAG, url);
@@ -58,7 +59,6 @@ public class FullsizePhotoFragment extends Fragment {
         mImageView = (ImageView)inflater.inflate(R.layout.list_item_gallery, container, false);
         return mImageView;
     }
-
 
     // DownloadImage AsyncTask
     private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
